@@ -9,17 +9,17 @@
 
 LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
 
+String sIP;
+String sMAC;
+String sEquipos;
 String inString; 
 String sDatosPrefijo;
 String sDatosFinal;
-String sIP;
-String sMAC;
 int iLargoDatos;
 int iPulsadorSI;
 int iPulsadorNO;
 bool bRefrescarLCD;
 bool bPregunta;
-
 
 void setup() {
   Serial.begin(9600);
@@ -48,7 +48,6 @@ void setup() {
 }
 
 void loop() {
-  if (Serial.available()) {
     inString =  Serial.readStringUntil('\n'); 
     sDatosPrefijo = inString.substring(0, 3);
     iLargoDatos = inString.length();
@@ -57,16 +56,15 @@ void loop() {
     if (sDatosPrefijo == "#0#") { sIP = sDatosFinal; }
     if (sDatosPrefijo == "#1#") { sMAC = sDatosFinal; }
     if ((sIP !="") && ((sMAC !=""))) { 
-      preguntarListas();
-      bRefrescarLCD = true;
-    } else {
-      if (bRefrescarLCD) { 
-        printLCD("netKero", "By: Lola");
-        ledVERDEAZULROJO(LOW, HIGH, LOW); 
-        bRefrescarLCD = false;
-        sIP = "";
-        sMAC = "";
-      }
+    preguntarListas();
+    bRefrescarLCD = true;
+  } else {
+    if (bRefrescarLCD) { 
+      printLCD("netKero", "By: Lola");
+      ledVERDEAZULROJO(LOW, HIGH, LOW); 
+      bRefrescarLCD = false;
+      sIP = "";
+      sMAC = "";
     }
   }
 }
