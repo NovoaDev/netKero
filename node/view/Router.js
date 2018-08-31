@@ -3,8 +3,10 @@ const web = express.Router()
 const bparser = require('body-parser')
 const cmd=require('node-cmd')
 const SerialPort = require('serialport')
+const datab = require('../utilidades/mysql')
 
 const ReadLine = SerialPort.parsers.Readline
+
 const port = new SerialPort("/dev/ttyACM0", { baudRate: 9600 })
 const parser = port.pipe(new ReadLine({ delimiter: '\r\n' }))
 
@@ -26,10 +28,10 @@ function cargarMacsTabla () {
     for (let i = 0; i < data.length;i++) {
       if ((sMacsTabla[i] != undefined) && (sMacsTabla[i].trim() != "")){
         envioArduino(sMacsTabla[i])
+        iEquipos++
       } else {
         i = data.length
       }
-      iEquipos++
     }
     port.write("#0#"+iEquipos.toString()+"\n")
   })
@@ -47,11 +49,7 @@ function envioArduino (sMacTemp) {
   port.write("#1#"+sMacLCD+"\n")
 }
 
-function agregarListaBlanca (sMac) {
-  
-}
-
-function agregarListaNegra (sMac) {
+function agregarDB (sMac) {
   
 }
 

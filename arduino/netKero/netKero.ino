@@ -59,7 +59,7 @@ void loop() {
     bRefrescarLCD = true;
   } else {
     if (bRefrescarLCD) { 
-      printLCD("netKero", "ON-LINE ; "+sEquipos);
+      printLCD("netKero", "ON-LINE : "+sEquipos);
       ledVERDEAZULROJO(LOW, HIGH, LOW); 
       bRefrescarLCD = false;
       sMAC = "";
