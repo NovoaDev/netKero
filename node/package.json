@@ -1,0 +1,18 @@
+{
+  "name": "netKero",
+  "version": "0.1.0",
+  "description": "NIDS con Arduino, Nodejs, Openwrt",
+  "main": "server.js",
+  "author": "Saycoron",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "node-cmd": "^3.0.0",
+    "serialport": "^7.0.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "nodejs server.js"
+  }
+}

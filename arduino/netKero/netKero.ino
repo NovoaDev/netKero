@@ -9,9 +9,8 @@
 
 LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
 
-String sIP;
-String sMAC;
 String sEquipos;
+String sMAC;
 String inString; 
 String sDatosPrefijo;
 String sDatosFinal;
@@ -36,8 +35,8 @@ void setup() {
   iPulsadorSI = LOW;
   iPulsadorNO = LOW;
 
-  sIP = "1";
-  sMAC = "001122334455";
+  sEquipos = "0";
+  sMAC = "";
 
   ledVERDEAZULROJO(LOW, HIGH, LOW);
   
@@ -48,29 +47,28 @@ void setup() {
 }
 
 void loop() {
-    inString =  Serial.readStringUntil('\n'); 
-    sDatosPrefijo = inString.substring(0, 3);
-    iLargoDatos = inString.length();
-    sDatosFinal = inString.substring(3, iLargoDatos);
-  
-    if (sDatosPrefijo == "#0#") { sIP = sDatosFinal; }
-    if (sDatosPrefijo == "#1#") { sMAC = sDatosFinal; }
-    if ((sIP !="") && ((sMAC !=""))) { 
+  inString =  Serial.readStringUntil('\n'); 
+  sDatosPrefijo = inString.substring(0, 3);
+  iLargoDatos = inString.length();
+  sDatosFinal = inString.substring(3, iLargoDatos);
+
+  if (sDatosPrefijo == "#0#") { sEquipos = sDatosFinal; }
+  if (sDatosPrefijo == "#1#") { sMAC = sDatosFinal; }
+  if (sMAC !="") { 
     preguntarListas();
     bRefrescarLCD = true;
   } else {
     if (bRefrescarLCD) { 
-      printLCD("netKero", "By: Lola");
+      printLCD("netKero", "ON-LINE ; "+sEquipos);
       ledVERDEAZULROJO(LOW, HIGH, LOW); 
       bRefrescarLCD = false;
-      sIP = "";
       sMAC = "";
     }
   }
 }
 
 void preguntarListas() {
-  printLCD(sIP, "MAC:"+sMAC);
+  printLCD("** NEW DEVICE **", "MAC:"+sMAC);
   bPregunta = true;
   
   while(bPregunta) {
@@ -81,21 +79,20 @@ void preguntarListas() {
     if (iPulsadorSI == HIGH) {
       ledVERDEAZULROJO(HIGH, LOW, LOW);
       printLCD("*** ACCEPTED ***" , "MAC:"+sMAC);
-      Serial.println("#01#"+sIP+"#"+sMAC);
+      Serial.println("#01#"+sMAC);
       salirWhile();
     } 
   
     if (iPulsadorNO == HIGH) {  
       ledVERDEAZULROJO(LOW, LOW, HIGH);
       printLCD("**** DENIED ****" , "MAC:"+sMAC);
-      Serial.println("#02#"+sIP+"#"+sMAC);
+      Serial.println("#02#"+sMAC);
       salirWhile();
     }
   } 
 }
 
 void salirWhile() {  
-  sIP = "";
   sMAC = "";
   bPregunta = false;
   delay(3000);
