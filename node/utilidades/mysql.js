@@ -210,7 +210,7 @@ db.selectMac = function selectMac (sMac, callback) {
           callback(oMac)
           console.log('Tabla mac ' + resultado[0].mac + ' CARGADA')
         } else {
-          callback("vacia")
+          callback("vacio")
           console.log('tabla mac vacia...')
         }
       }
