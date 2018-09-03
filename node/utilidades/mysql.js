@@ -3,6 +3,7 @@ const cfg = require('./cfg')
 const crypto = require('./crypto')
 
 const macModel = require('../modelos/macModel')
+const emailModel = require('../modelos/emailModel')
 
 let usuario = cfg.key.sqlUser
 let pass = cfg.key.sqlPassword
@@ -33,6 +34,10 @@ db.crearTabla = function crearTabla (sTabla) {
     connection.query('CREATE TABLE IF NOT EXISTS mac (id INT AUTO_INCREMENT PRIMARY KEY, alias varchar(40), mac varchar(40), permitida varchar(1))') 
     console.log('Tabla de mysql(mac) Creada!')
   }
+  if (sTabla == "mail") {
+    connection.query('CREATE TABLE IF NOT EXISTS mail (id INT AUTO_INCREMENT PRIMARY KEY, service varchar(40), usuario varchar(40), pass varchar(40), fromMail varchar(40), toMail varchar(120))')  
+    console.log('Tabla de mysql(mail) Creada!')
+  }
 }
 
 db.eliminarTabla = function eliminarTabla (sTabla) {
@@ -44,6 +49,10 @@ db.eliminarTabla = function eliminarTabla (sTabla) {
   if (sTabla == "mac") {
     connection.query('DROP TABLE mac')
     console.log('Tabla de mysql(mac) Borrada!')
+  }
+  if (sTabla == "mail") {
+    connection.query('DROP TABLE mail')
+    console.log('Tabla de mysql(mail) Borrada!')
   }
 }
 // FIN CREAR / ELIMINAR TABLAS -----------------------------------------------------------------------
@@ -178,9 +187,9 @@ db.eliminarMac = function eliminarMac (sMac) {
   })
 }
 
-db.updateMac = function updateMac (sAlias, sMac, sPermitida, sMacAntigua) {
+/*db.updateMac = function updateMac (sAlias, sMac, sPermitida, sMacAntigua) {
 
-  connection.query("UPDATE mac SET alias= '"+sAlias+"', mac= '"+sMac+"', permitida= '"+sPermitida+"' WHERE mac = '" +sMacAntigua+""
+  connection.query("UPDATE mac SET alias= '"+sAlias+"', mac= '"+sMac+"', permitida= '"+sPermitida+"' WHERE mac = '" +sMacAntigua+"'"
   function (err, res) {
     if (err) {
       console.log('error sql')
@@ -190,6 +199,7 @@ db.updateMac = function updateMac (sAlias, sMac, sPermitida, sMacAntigua) {
     }
   })
 }
+*/
 
 db.selectMac = function selectMac (sMac, callback) {
   if ((sMac != "") && (sMac != undefined)) {
@@ -246,5 +256,75 @@ db.selectMac = function selectMac (sMac, callback) {
 }
 
 // FIN CREAR / ELIMINAR / ACTUALIZAR / SELECT MAC ------------------------------------------------------------
+
+// CREAR / ELIMINAR / SELECT / ACTUALIZAR MAIL --------------------------------------------------------------------
+db.crearCFGMail = function crearCFGMail (sService, sUsuario, sPass, sFromMail, sToMail) {
+  
+  database = { service: sService, usuario: sUsuario, pass: sPass, fromMail: sFromMail, toMail: sToMail }
+
+  connection.query('INSERT INTO mail SET ?', database, function (err, res) {
+    if (err) {
+      throw err
+    } else {
+      console.log('mail last insert id:' + res.insertId)
+      console.log('--------------------')  
+    }
+  })
+}
+
+db.eliminarCFGMail = function eliminarCFGMail () {
+
+  connection.query("DELETE FROM mail",
+  function (err, res) {
+    if (err) {
+      console.log('error sql')
+      throw err
+    } else {
+    console.log('Se elimina el cfg de correo: ' + usuario + '...')
+    }
+  })
+}
+
+db.selectMail = function selectMail (callback) {
+
+  connection.query("SELECT * FROM mail",
+  function (err, rows) {
+    let resultado = rows
+    if (err) {
+      console.log('error sql')
+      callback("error")
+      throw err
+    } else {
+      if (resultado.length > 0) {
+        mail.setService(resultado[0].service)     
+        mail.setUsuario(resultado[0].usuario)
+        mail.setPass(resultado[0].pass)
+        mail.setFromMail(resultado[0].fromMail)
+        mail.setToMail(resultado[0].toMail)
+
+        callback(mail)
+        console.log('CFG MAIL CARGADA ' + resultado[0].usuario + '...')
+      } else {
+        callback("vacia")
+        console.log('tabla vacia mail...') 
+      }
+    }
+  })
+}
+
+db.updateMail = function updateMail (sService, sUsuario, sNuevaPass, sNuevaFromMail, sNuevaToMail) {
+
+  connection.query("UPDATE mail SET service= '"+sService+"', usuario= '"+sUsuario+"', pass= '"+sNuevaPass+"', fromMail= '"+sNuevaFromMail+"', toMail= '"+sNuevaToMail+"' WHERE id LIKE 1",
+  function (err, res) {
+    if (err) {
+      console.log('error sql')
+      throw err
+    } else {
+      console.log('Configuracion de correo actualizada')
+    }
+  })
+}
+// FIN CREAR / ELIMINAR / SELECT / ACTUALIZAR MAIL ----------------------------------------------------------------
+
 
 module.exports = db

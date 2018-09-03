@@ -4,6 +4,7 @@ const bparser = require('body-parser')
 const cmd=require('node-cmd')
 const SerialPort = require('serialport')
 const datab = require('../utilidades/mysql')
+const mailer = require('./utilidades/mailer')
 const model = require('../modelos/macModel')
 
 const ReadLine = SerialPort.parsers.Readline
